@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(permutationsPdfGenerator VERSION 1.0.0)
+
+add_executable(permutations permutations.cpp)
+add_executable(permutationIversions permutationIversions.c)
+add_executable(permutationEveness permutationEveness.c)
+add_executable(numberOfInversions numberOfInversions.c)
+add_executable(permutationLimitChecker permutationLimitChecker.c)
+add_executable(permutationSquare permutationSquare.c)
+add_executable(orderOfPermutations orderOfPermutations.c)
+add_executable(cycleNotation cycleNotation.c)
