@@ -1,7 +1,7 @@
 #!/bin/bash
 
 filename=$1
-startTime=`date +"Year: %Y.%m.%d %H:%M:%S"`
+startTime=`date +"%Y.%m.%d %H:%M:%S"`
 
 #checking if configuration file exists
 if [[ -n "$1" ]]
@@ -205,7 +205,7 @@ do
 	fi
 done
 
-endTime=`date +"Year: %Y.%m.%d %H:%M:%S"`
+endTime=`date +"%Y.%m.%d %H:%M:%S"`
 
 #generating file with general information
 generalLogRelPath="$folderRelPath/general.txt"
