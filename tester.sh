@@ -1,6 +1,7 @@
 #!/bin/bash
 
 filename=$1
+startTime=`date +"Year: %Y.%m.%d %H:%M:%S"`
 
 #checking if configuration file exists
 if [[ -n "$1" ]]
@@ -90,9 +91,6 @@ then
 fi
 mkdir $folderRelPath
 
-#setting timeformat to seconds
-TIMEFORMAT=%R
-
 #creating temp file which contain relative paths to times
 if [[ -e tmpFile.txt ]]
 then
@@ -127,27 +125,29 @@ do
 					exit 12
 				fi
 
+				#appending data about type of test
+				echo "A" >> $fileRelPath
+
 				#appending params to config file and launching generator
 				params=(${lines[$parTestA]})
 				for param in "${params[@]}"
 				do
-				   echo "$param 0" >> $generatorCfgRel
+					echo "$param 0" > $generatorCfgRel
+
+					echo $param >> $fileRelPath
+					cd ./permutations
+					/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg
+					if (( $? != 0 ))
+					then
+						echo "Error durring creation of pdf occurred."
+						rm -rf $folderRelPath
+						exit 10
+					fi
+					cd ..
+
 				done
-
-				#appending data to file test a
-				echo "A" >> $fileRelPath
-
-				cd ./permutations
-				/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg
-				cd ..
-
-				for param in "${params[@]}"
-				do
-				   echo "$param" >> $fileRelPath
-				done
-
+				#appending information about localisation of log file
 				echo $fileRelPath >> tmpFile.txt
-
 			else
 				let parTestA++
     			echo "Error in line $parTestA of config file, such syntax of test does not exist."
@@ -159,7 +159,39 @@ do
 			let "parTestB = i + 1"
     		if echo "${lines[$parTestB]}" | grep -Eq '^[0-9]+([ ]+[0-9]+)*$'
 			then
-    			echo "Linia zawiera liczby oddzielone spacją."
+				#creating txt file with times
+				fileRelPath="$folderRelPath/B$i"
+				touch $fileRelPath
+				if (( $? != 0 ))
+				then
+					echo "Unable to create times file."
+					exit 12
+				fi
+
+				#appending data about type of test
+				echo "B" >> $fileRelPath
+
+				#appending params to config file and launching generator
+				bDefinition=(${lines[$i]})
+				permutationSize=${bDefinition[1]}
+				params=(${lines[$parTestB]})
+				for param in "${params[@]}"
+				do
+					echo "$permutationSize $param" > $generatorCfgRel
+
+					echo "$permutationSize $param" >> $fileRelPath
+					cd ./permutations
+					/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg
+					if (( $? != 0 ))
+					then
+						echo "Error durring creation of pdf occurred."
+						rm -rf $folderRelPath
+						exit 10
+					fi
+					cd ..
+				done
+				#appending information about localisation of log file
+				echo $fileRelPath >> tmpFile.txt
 			else
 				let parTestB++
     			echo "Error in line $parTestB of config file, such syntax of test does not exist."
@@ -173,4 +205,26 @@ do
 	fi
 done
 
-	
+endTime=`date +"Year: %Y.%m.%d %H:%M:%S"`
+
+#generating file with general information
+generalLogRelPath="$folderRelPath/general.txt"
+if (( $? != 0 ))
+then
+	echo "Cannot create general log file."
+	rm -rf $folderIdentifier
+fi
+
+#appending data to general log file
+echo $startTime >> $generalLogRelPath
+echo $endTime >> $generalLogRelPath
+echo $1 >> $generalLogRelPath
+echo $folderRelPath >> $generalLogRelPath
+echo `pwd` >> $generalLogRelPath
+echo $fistLine >> $generalLogRelPath
+
+echo $generalLogRelPath >> tmpFile.txt
+
+#stating igors and karbowsky script
+#./skrypt.sh ./tmpFile.txt
+
