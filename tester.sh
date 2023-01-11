@@ -99,6 +99,7 @@ then
 fi
 
 generatorCfgRel="./permutations/config.cfg"
+echo "Testing..."
 for (( i=0; i<${#lines[@]}; i++ ));
 do
 	if (( $i % 2 != 0 ))
@@ -136,7 +137,7 @@ do
 
 					echo $param >> $fileRelPath
 					cd ./permutations
-					/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg
+					/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg >> /dev/null
 					if (( $? != 0 ))
 					then
 						echo "Error durring creation of pdf occurred."
@@ -181,7 +182,7 @@ do
 
 					echo "$permutationSize $param" >> $fileRelPath
 					cd ./permutations
-					/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg
+					/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg >> /dev/null
 					if (( $? != 0 ))
 					then
 						echo "Error durring creation of pdf occurred."
@@ -219,11 +220,19 @@ fi
 echo $startTime >> $generalLogRelPath
 echo $endTime >> $generalLogRelPath
 echo $1 >> $generalLogRelPath
-echo $folderRelPath >> $generalLogRelPath
+cd $folderRelPath
+echo `pwd` >> ../../$generalLogRelPath
+cd ../..
 echo `pwd` >> $generalLogRelPath
 echo $fistLine >> $generalLogRelPath
 
 echo $generalLogRelPath >> tmpFile.txt
+
+#info about logs
+cd $folderRelPath
+echo "Logs are saved in: `pwd`."
+cd ..
+cd ..
 
 #stating igors and karbowsky script
 #./skrypt.sh ./tmpFile.txt
