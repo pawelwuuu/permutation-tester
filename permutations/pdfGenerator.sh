@@ -132,7 +132,10 @@ done
 
 
 #creation of pdf
+if [[ -e ./generatedPdf ]]
+then
 rm -r ./generatedPdf
+fi
 mkdir generatedPdf
 touch ./generatedPdf/sketch.tex
 
@@ -179,7 +182,7 @@ done
 echo "\end{document}" >> ./generatedPdf/sketch.tex
 
 
-pdflatex  -output-directory=generatedPdf -jobname="Generated PDF" --interaction=batchmode ./generatedPdf/sketch.tex > /dev/null
+pdflatex  -output-directory=generatedPdf -jobname="GeneratedPDF" --interaction=batchmode ./generatedPdf/sketch.tex > /dev/null
 
 echo "Success! Generated file is in generatedPdf folder."
 exit 0

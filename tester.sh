@@ -98,6 +98,23 @@ then
 	touch tmpFile.txt
 fi
 
+#creating config file for general document
+generalPrmCfgPath="`pwd`/permutations/general.cfg"
+if [[ -e $generalPrmCfgPath ]]
+then
+	rm $generalPrmCfgPath
+	touch $generalPrmCfgPath
+else
+	touch $generalPrmCfgPath
+fi
+
+if (( $? != 0 ))
+then
+	echo "Problem with pemutations general parameters file."
+	exit 15
+fi
+
+
 generatorCfgRel="./permutations/config.cfg"
 echo "Testing..."
 for (( i=0; i<${#lines[@]}; i++ ));
@@ -134,6 +151,7 @@ do
 				for param in "${params[@]}"
 				do
 					echo "$param 0" > $generatorCfgRel
+					echo "$param 0" >> $generalPrmCfgPath
 
 					echo $param >> $fileRelPath
 					cd ./permutations
@@ -179,8 +197,9 @@ do
 				for param in "${params[@]}"
 				do
 					echo "$permutationSize $param" > $generatorCfgRel
-
+					echo "$permutationSize $param" >> $generalPrmCfgPath
 					echo "$permutationSize $param" >> $fileRelPath
+
 					cd ./permutations
 					/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg >> /dev/null
 					if (( $? != 0 ))
@@ -206,6 +225,20 @@ do
 	fi
 done
 
+#generating pdf document with whole permutations and moving it to folder path
+echo "Generating master pdf document..."
+cd ./permutations
+./pdfGenerator.sh $generalPrmCfgPath >> /dev/null
+cd ..
+if (( $? != 0 ))
+then
+	echo "Error durring creation of pdf occurred."
+	rm -rf $folderRelPath
+	exit 10
+fi
+mv -f ./permutations/generatedPdf/ $folderRelPath
+
+
 endTime=`date +"%Y.%m.%d %H:%M:%S"`
 
 #generating file with general information
@@ -213,7 +246,7 @@ generalLogRelPath="$folderRelPath/general.txt"
 if (( $? != 0 ))
 then
 	echo "Cannot create general log file."
-	rm -rf $folderIdentifier
+	rm -rf $folderRelPath
 fi
 
 #appending data to general log file
@@ -225,6 +258,8 @@ echo `pwd` >> ../../$generalLogRelPath
 cd ../..
 echo `pwd` >> $generalLogRelPath
 echo $fistLine >> $generalLogRelPath
+echo "`pwd`/permutations/generatedPdf/" >> $generalLogRelPath
+echo $folderRelPath >> $generalLogRelPath
 
 echo $generalLogRelPath >> tmpFile.txt
 
