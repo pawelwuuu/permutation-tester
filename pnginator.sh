@@ -1,6 +1,6 @@
 #!/bin/bash
 
-title=$(tail -n 1 imput.txt)
+title=$(tail -n 1 input.txt)
 output_file=$title.png
 
 head -n -1 input.txt | sort -n > sorted_file.txt
