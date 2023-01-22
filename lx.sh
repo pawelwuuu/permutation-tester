@@ -6,12 +6,24 @@ echo "\usepackage[T1]{fontenc}" >> hello.tex
 echo "\usepackage{graphicx}" >> hello.tex
 echo "\usepackage{titlesec}" >> hello.tex
 echo "\begin{document}" >> hello.tex
-#echo "\title{Statystyki}" >> hello.tex
-#echo "\maketitle" >> hello.tex
 
 j=0
-while IFS= read -r line2; do
-    staty=$line2
+
+droga=droga
+lines=$(wc -l < tmpFile.txt)
+
+# Tworzenie tablicy
+lines_array=()
+
+# Iteracja po wszystkich liniach z pliku, z wyjątkiem ostatniej
+for ((a=1; a<$lines; a++)); do
+    # Pobieranie linii z pliku
+    line=$(sed -n "${a}p" tmpFile.txt)
+    line=${line:2}
+    cp $line .
+    droga=$line
+    # Dodawanie linii do tablicy
+    staty=${line:20}
 # Tworzenie tablicy do przechowywania linii z pliku
 linie_pliku=()
 czasy=()
@@ -68,12 +80,34 @@ dlugosc=$(((dlugosc - 1) / 2))
 
 j=$(($j+1))
 
+rm $staty
+done
 
-done < dane.txt
+last_line=$(sed -n "${lines}p" tmpFile.txt)
+last_line=${last_line:2}
+cp $last_line .
+last_line=${last_line:20}
 
+koniec=()
 
+while read line; do
+	koniec+=$line
+done < $last_line
+
+echo "Data ropoczecia skryptu : ${koniec[0]}\\\\" >> hello.tex
+echo "Data zakonczenia skryptu: ${koniec[1]}\\\\" >> hello.tex
+echo "Nazwa pliku configuracyjnego: ${koniec[2]}\\\\" >> hello.tex
+echo "Folder zawierajacy pliki z poszczegolnych testow: ${koniec[3]}\\\\" >> hello.tex
+echo "Folder, w ktorym jest tester: ${koniec[4]}\\\\" >> hello.tex
+echo "Liczba testow: ${koniec[5]}\\\\" >> hello.tex
+rm $last_line
 echo "\end{document}" >> hello.tex
 
 # Kompilacja pliku LaTeX do PDF
 pdflatex hello.tex >> /dev/null
+
+droga=${droga:0:20}
+for ((a=0; a+1<$lines; a++)); do
+mv $a.png $droga
+done
 
