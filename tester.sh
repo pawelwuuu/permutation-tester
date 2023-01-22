@@ -270,5 +270,5 @@ cd ..
 cd ..
 
 #stating igors and karbowsky script
-#./skrypt.sh ./tmpFile.txt
+./lx.sh ./tmpFile.txt
 
