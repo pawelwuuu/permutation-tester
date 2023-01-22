@@ -187,18 +187,18 @@ do
 					exit 12
 				fi
 
-				#appending data about type of test
-				echo "B" >> $fileRelPath
-
 				#appending params to config file and launching generator
 				bDefinition=(${lines[$i]})
 				permutationSize=${bDefinition[1]}
 				params=(${lines[$parTestB]})
+
+				#appending data about type of test
+				echo "B $permutationSize" >> $fileRelPath
 				for param in "${params[@]}"
 				do
 					echo "$permutationSize $param" > $generatorCfgRel
 					echo "$permutationSize $param" >> $generalPrmCfgPath
-					echo "$permutationSize $param" >> $fileRelPath
+					echo "$param" >> $fileRelPath
 
 					cd ./permutations
 					/usr/bin/time -ao ../$fileRelPath -f "%e" ./pdfGenerator.sh ./config.cfg >> /dev/null
