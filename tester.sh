@@ -282,6 +282,8 @@ echo "Logs are saved in: `pwd`."
 cd ..
 cd ..
 
+
 #stating igors and karbowsky script
 ./lx.sh ./tmpFile.txt
 
+rm -f ./tmpFile.txt
