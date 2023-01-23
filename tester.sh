@@ -16,7 +16,7 @@ else
     exit 2
 fi
 
-#configuration of permutation gen
+#configuration of permutation gen and other stuff
 if [ -e ./permutations/build ]
 then
 	rm -r ./permutations/build
@@ -41,6 +41,8 @@ chmod 777 ../pdfGenerator.sh
 chmod 777 ../subsectionGenerator.sh
 cd ..
 cd ..
+chmod 777 ./pnginator.sh
+chmod 777 ./lx.sh
 
 #checking if file ends with empty line character
 fileContent=`cat -e $filename`
