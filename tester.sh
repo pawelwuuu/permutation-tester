@@ -38,6 +38,11 @@ else
 	echo "Permutations project build succesful."
 fi
 chmod 777 ../pdfGenerator.sh
+if (( $? > 0 ))
+then
+	echo "Permissions denied. Ask sudo for help."
+	exit 777
+fi
 chmod 777 ../subsectionGenerator.sh
 cd ..
 cd ..
@@ -57,6 +62,12 @@ fistLine=`head -n 1 $filename`
 if ! echo "$fistLine" | grep -Eq '^[0-9]+$'; then
     echo "First line must be a number of tests aplied."
 	exit 6
+fi
+
+if [[ $fistLine -le 2 ]]
+then
+	echo "Really?? Only one test? Try something bigger."
+	exit 555
 fi
 
 numOfLines=`wc -l $filename | grep -Po "\\d+"`
