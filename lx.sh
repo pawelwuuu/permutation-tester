@@ -7,6 +7,24 @@ echo "\usepackage{graphicx}" >> hello.tex
 echo "\usepackage{titlesec}" >> hello.tex
 echo "\begin{document}" >> hello.tex
 
+last_line=`tail -n 1 tmpFile.txt`
+# echo $last_line
+# cp $last_line .
+koniec=()
+
+while read linia; do
+koniec+=("$linia")
+done < $last_line
+
+echo "\subsection{Dane testera}" >> hello.tex
+echo "Data ropoczecia skryptu : ${koniec[0]}\\\\" >> hello.tex
+echo "Data zakonczenia skryptu: ${koniec[1]}\\\\" >> hello.tex
+echo "Nazwa pliku configuracyjnego: ${koniec[2]}\\\\" >> hello.tex
+echo "Folder zawierajacy pliki z poszczegolnych testow: ${koniec[3]}\\\\" >> hello.tex
+echo "Folder, w ktorym jest tester: ${koniec[4]}\\\\" >> hello.tex
+echo "Liczba testow: ${koniec[5]}\\\\" >> hello.tex
+echo "\pagebreak" >> hello.tex
+
 j=0
 
 droga=droga
@@ -62,7 +80,7 @@ dlugosc=$(((dlugosc - 1) / 2))
 	echo "\hline" >> hello.tex
 	echo "Ilosc permutacji & Czas\\\\" >> hello.tex
 	echo "\hline\hline" >> hello.tex
-	rm input.txt
+	rm -f ./input.txt
 	for ((i=0;i<${dlugosc};i++));do
 	    echo "${permutacje[$i]} & ${czasy[$i]} \\\\ " >> hello.tex
 	    echo "${permutacje[$i]} ${czasy[$i]}" >> input.txt
@@ -83,24 +101,6 @@ j=$(($j+1))
 rm $staty
 done
 
-last_line=$(sed -n "${lines}p" tmpFile.txt)
-last_line=${last_line:2}
-cp $last_line .
-last_line=${last_line:20}
-
-koniec=()
-
-while read line; do
-	koniec+=$line
-done < $last_line
-
-echo "Data ropoczecia skryptu : ${koniec[0]}\\\\" >> hello.tex
-echo "Data zakonczenia skryptu: ${koniec[1]}\\\\" >> hello.tex
-echo "Nazwa pliku configuracyjnego: ${koniec[2]}\\\\" >> hello.tex
-echo "Folder zawierajacy pliki z poszczegolnych testow: ${koniec[3]}\\\\" >> hello.tex
-echo "Folder, w ktorym jest tester: ${koniec[4]}\\\\" >> hello.tex
-echo "Liczba testow: ${koniec[5]}\\\\" >> hello.tex
-rm $last_line
 echo "\end{document}" >> hello.tex
 
 # Kompilacja pliku LaTeX do PDF
@@ -111,3 +111,9 @@ for ((a=0; a+1<$lines; a++)); do
 mv $a.png $droga
 done
 
+#usuwanie scierwa i przerzucanie go
+mv ./hello.pdf "$droga/tests.pdf" >> /dev/null
+cp "./${koniec[2]}" "$droga" >> /dev/null
+rm -f ./hello*
+rm -f ./input.txt
+rm -f ./sorted_file.txt
