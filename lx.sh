@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Tworzenie pliku LaTeX
 echo "\documentclass{article}" > hello.tex
 echo "\usepackage[T1]{fontenc}" >> hello.tex
 echo "\usepackage{graphicx}" >> hello.tex
@@ -33,27 +32,24 @@ lines=$(wc -l < tmpFile.txt)
 # Tworzenie tablicy
 lines_array=()
 
-# Iteracja po wszystkich liniach z pliku, z wyjątkiem ostatniej
+# Wczytywanie wszystkich liniach z pliku, z wyjątkiem ostatniej
 for ((a=1; a<$lines; a++)); do
-    # Pobieranie linii z pliku
     line=$(sed -n "${a}p" tmpFile.txt)
     line=${line:2}
     cp $line .
     droga=$line
-    # Dodawanie linii do tablicy
     staty=${line:20}
 # Tworzenie tablicy do przechowywania linii z pliku
 linie_pliku=()
 czasy=()
 permutacje=()
 
-# Otwarcie pliku staty.txt do odczytu
+
 while IFS= read -r line; do
-    # Dodanie aktualnie przetwarzanej linijki do tablicy
     linie_pliku+=("$line")
 done < $staty
 
-#Tworzenie dwoch tablic
+#Rozdzielanie na czas i permutacje
 for ((i=1;i<${#linie_pliku[*]};i++));do
     if [[ $((i % 2)) -eq 0 ]]; then
         czasy+=("${linie_pliku[i]}")
